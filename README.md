@@ -1,7 +1,7 @@
 # zabbix-proxy-mysql-nginx
 zabbix分布式监控
 
-# 安装对应的agent
+# 安装被监控端的agent
 rpm -Uvh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm  
 yum install zabbix-agent -y  
 systemctl start zabbix-agent  
@@ -20,6 +20,8 @@ Include=/etc/zabbix/zabbix_agentd.d/*.conf
 # 注意
 报错：cannot parse proxy data from active proxy at "182.19.0.136": proxy "zabbix-proxy1" not found   
 # 解决办法：
+## 重启对应服务
 docker-compose -f zabbix3.yml restart zabbix-server && docker-compose -f zabbix3.yml restart zabbix-proxy  
+## 重启agent
 systemctl restart zabbix-agent
 
