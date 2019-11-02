@@ -1,0 +1,105 @@
+version: '3'
+services:
+   mysql-server:
+     image: mysql:5.7
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: root_pwd
+       MYSQL_DATABASE: zabbix
+       MYSQL_USER: zabbix
+       MYSQL_PASSWORD: zabbix_pwd
+     command: --character-set-server=utf8
+     networks:
+      zabbix-grafana:
+        ipv4_address: 182.19.0.131
+     
+         
+         
+   zabbix-server:
+     depends_on:
+       - mysql-server
+     image: zabbix/zabbix-server-mysql:centos-4.0.4
+     restart: always
+     environment:
+       DB_SERVER_HOST: mysql-server
+       MYSQL_DATABASE: zabbix
+       MYSQL_USER: zabbix
+       MYSQL_PASSWORD: zabbix_pwd
+       MYSQL_ROOT_PASSWORD: root_pwd
+     ports:
+       - "10051:10051"  
+     networks:
+      zabbix-grafana:
+        ipv4_address: 182.19.0.132
+           
+   zabbix-web-nginx-mysql:
+     depends_on:
+       - zabbix-server
+     image: zabbix/zabbix-web-nginx-mysql:centos-4.0.4
+     ports:
+       - "80:80"
+     restart: always
+     environment:
+       DB_SERVER_HOST: mysql-server
+       MYSQL_DATABASE: zabbix
+       MYSQL_USER: zabbix
+       MYSQL_PASSWORD: zabbix_pwd
+       MYSQL_ROOT_PASSWORD: root_pwd
+     networks:
+      zabbix-grafana:
+        ipv4_address: 182.19.0.133
+
+
+   zabbix-agent:
+    image: zabbix/zabbix-agent:centos-4.0.4
+    container_name: zabbix-server-agent
+    environment:
+      ZBX_HOSTNAME: zabbix-server
+      ZBX_SERVER_HOST: 182.19.0.132
+      ZBX_METADATAITEM: system.hostname
+    ports:
+      - '10052:10050'
+    links:
+      - zabbix-server
+    depends_on:
+      - zabbix-server
+    networks:
+      zabbix-grafana:
+        ipv4_address: 182.19.0.134
+    
+   mysql-proxy-server:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pwd
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: zabbix_pwd
+    command: --character-set-server=utf8
+    networks:
+      zabbix-grafana:
+        ipv4_address: 182.19.0.135
+
+   zabbix-proxy:
+    depends_on:
+      - mysql-proxy-server
+      - zabbix-server
+    image: zabbix/zabbix-proxy-mysql:centos-4.0.4
+    restart: always
+    environment:
+      ZBX_SERVER_HOST: zabbix-server
+      ZBX_HOSTNAME: zabbix-proxy1
+      DB_SERVER_HOST: mysql-proxy-server
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: zabbix_pwd
+      MYSQL_ROOT_PASSWORD: root_pwd
+    ports:
+      - "10053:10051"
+    networks:
+      zabbix-grafana:
+        ipv4_address: 182.19.0.136
+
+networks:
+    zabbix-grafana:
+        external: true
