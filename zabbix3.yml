@@ -8,6 +8,8 @@ services:
        MYSQL_DATABASE: zabbix
        MYSQL_USER: zabbix
        MYSQL_PASSWORD: zabbix_pwd
+     ports:
+       - '3306:3306'
      command: --character-set-server=utf8
      networks:
       zabbix-grafana:
@@ -27,7 +29,10 @@ services:
        MYSQL_PASSWORD: zabbix_pwd
        MYSQL_ROOT_PASSWORD: root_pwd
      ports:
-       - "10051:10051"  
+       - "10051:10051" 
+     volumes:
+       - /etc/timezone:/etc/timezone
+       - /etc/localtime:/etc/localtime 
      networks:
       zabbix-grafana:
         ipv4_address: 182.19.0.132
@@ -45,6 +50,7 @@ services:
        MYSQL_USER: zabbix
        MYSQL_PASSWORD: zabbix_pwd
        MYSQL_ROOT_PASSWORD: root_pwd
+       PHP_TZ: Asia/Shanghai
      networks:
       zabbix-grafana:
         ipv4_address: 182.19.0.133
@@ -76,6 +82,8 @@ services:
       MYSQL_USER: zabbix
       MYSQL_PASSWORD: zabbix_pwd
     command: --character-set-server=utf8
+    ports:
+      - '3307:3306'
     networks:
       zabbix-grafana:
         ipv4_address: 182.19.0.135
@@ -96,6 +104,9 @@ services:
       MYSQL_ROOT_PASSWORD: root_pwd
     ports:
       - "10053:10051"
+    volumes:
+       - /etc/timezone:/etc/timezone
+       - /etc/localtime:/etc/localtime
     networks:
       zabbix-grafana:
         ipv4_address: 182.19.0.136
