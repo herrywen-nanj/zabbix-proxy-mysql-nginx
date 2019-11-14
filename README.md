@@ -20,6 +20,8 @@ Include=/etc/zabbix/zabbix_agentd.d/*.conf
 # 注意
 报错：cannot parse proxy data from active proxy at "182.19.0.136": proxy "zabbix-proxy1" not found   
 # 解决办法：
+## 启动顺序  
+server-->proxy-->client
 ## 重启对应服务
 docker-compose -f zabbix3.yml restart zabbix-server && docker-compose -f zabbix3.yml restart zabbix-proxy  
 ## 重启agent
