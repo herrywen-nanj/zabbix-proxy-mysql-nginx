@@ -18,7 +18,14 @@ Include=/etc/zabbix/zabbix_agentd.d/*.conf
 
 
 # 注意
-报错：cannot parse proxy data from active proxy at "182.19.0.136": proxy "zabbix-proxy1" not found   
+# 默认安装之后，zabbix-server无法监控其自身，原因zabbix-server没有安装agent
+解决：
+$   docker-compsoe exec zabbix-server sh
+>>> yum install -y http://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-4.0.4-1.el7.x86_64.rpm
+>>> /usr/sbin/zabbix_agentd
+
+
+# 问题报错：cannot parse proxy data from active proxy at "182.19.0.136": proxy "zabbix-proxy1" not found   
 # 解决办法：
 ## 启动顺序  
 server-->proxy-->client
